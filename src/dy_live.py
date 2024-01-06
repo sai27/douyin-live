@@ -30,7 +30,7 @@ from proto.dy_pb2 import UpdateFanTicketMessage
 from proto.dy_pb2 import CommonTextMessage
 from proto.dy_pb2 import ProductChangeMessage
 from src.process_message import GiftHandler
-
+from src.process_message import SendToProcess
 # 直播信息全局变量
 liveRoomId = ""
 ttwid = ""
@@ -62,7 +62,7 @@ def onMessage(ws: websocket.WebSocketApp, message: bytes):
 
         # 点赞数
         if msg.method == 'WebcastLikeMessage':
-        #    unPackWebcastLikeMessage(msg.payload)
+            unPackWebcastLikeMessage(msg.payload)
             continue
 
         # 成员进入直播间消息
@@ -215,6 +215,10 @@ def unPackWebcastLikeMessage(data):
     # like_num = int(data["total"])
     GlobalVal.like_num = int(data.get("total", 0))
     log = json.dumps(data, ensure_ascii=False)
+
+    userName = data.get("user").get("nickName")
+    count = data.get("count")
+    SendToProcess(f"like#{userName}#{count}\r\n")
     logger.info(f'[unPackWebcastLikeMessage] [直播间点赞统计{data["total"]}] [房间Id：' + liveRoomId + '] | ' + log)
     return data
 
@@ -277,8 +281,8 @@ def ping(ws):
 def wssServerStart():
     websocket.enableTrace(False)
     # 拼接获取弹幕消息的websocket的链接
-    #webSocketUrl = 'wss://webcast5-ws-web-lf.douyin.com/webcast/im/push/v2/?app_name=douyin_web&version_code=180800&webcast_sdk_version=1.3.0&update_version_code=1.3.0&compress=gzip&internal_ext=internal_src:dim|wss_push_room_id:' + liveRoomId + '|wss_push_did:7188358506633528844|dim_log_id:20230521093022204E5B327EF20D5CDFC6|fetch_time:1684632622323|seq:1|wss_info:0-1684632622323-0-0|wrds_kvs:WebcastRoomRankMessage-1684632106402346965_WebcastRoomStatsMessage-1684632616357153318&cursor=t-1684632622323_r-1_d-1_u-1_h-1&host=https://live.douyin.com&aid=6383&live_id=1&did_rule=3&debug=false&maxCacheMessageNumber=20&endpoint=live_pc&support_wrds=1&im_path=/webcast/im/fetch/&user_unique_id=7188358506633528844&device_platform=web&cookie_enabled=true&screen_width=1440&screen_height=900&browser_language=zh&browser_platform=MacIntel&browser_name=Mozilla&browser_version=5.0%20(Macintosh;%20Intel%20Mac%20OS%20X%2010_15_7)%20AppleWebKit/537.36%20(KHTML,%20like%20Gecko)%20Chrome/113.0.0.0%20Safari/537.36&browser_online=true&tz_name=Asia/Shanghai&identity=audience&room_id=' + liveRoomId + '&heartbeatDuration=0&signature=00000000'
-    webSocketUrl = 'wss://webcast5-ws-web-lq.douyin.com/webcast/im/push/v2/?app_name=douyin_web&version_code=180800&webcast_sdk_version=1.0.12&update_version_code=1.0.12&compress=gzip&device_platform=web&cookie_enabled=true&screen_width=1440&screen_height=2560&browser_language=zh-CN&browser_platform=Win32&browser_name=Mozilla&browser_version=5.0%20(Windows%20NT%2010.0;%20Win64;%20x64)%20AppleWebKit/537.36%20(KHTML,%20like%20Gecko)%20Chrome/120.0.0.0%20Safari/537.36%20Edg/120.0.0.0&browser_online=true&tz_name=Asia/Shanghai&cursor=t-1704523551125_r-1_d-1_u-1_fh-7320872183134786596&internal_ext=internal_src:dim|wss_push_room_id:'+liveRoomId +'|wss_push_did:7285964215302932028|first_req_ms:1704523551024|fetch_time:1704523551125|seq:1|wss_info:0-1704523551125-0-0|wrds_v:7320872889626929786|wrds_kvs:AudienceGiftSyncData-1704523547953806805_WebcastRoomStreamAdaptationMessage-1704523545339363697_InteractEffectSyncData-1704520547601399747_LotteryInfoSyncData-1704523262406134920_HighlightContainerSyncData-1_WebcastRoomStatsMessage-1704523546497704102_WebcastRoomRankMessage-1704523516571828328&host=https://live.douyin.com&aid=6383&live_id=1&did_rule=3&endpoint=live_pc&support_wrds=1&user_unique_id=7285964215302932028&im_path=/webcast/im/fetch/&identity=audience&need_persist_msg_count=15&room_id='+ liveRoomId + '&heartbeatDuration=0&signature=RDJMtCOOuuLWg2qT'
+    webSocketUrl = 'wss://webcast5-ws-web-lf.douyin.com/webcast/im/push/v2/?app_name=douyin_web&version_code=180800&webcast_sdk_version=1.3.0&update_version_code=1.3.0&compress=gzip&internal_ext=internal_src:dim|wss_push_room_id:' + liveRoomId + '|wss_push_did:7188358506633528844|dim_log_id:20230521093022204E5B327EF20D5CDFC6|fetch_time:1684632622323|seq:1|wss_info:0-1684632622323-0-0|wrds_kvs:WebcastRoomRankMessage-1684632106402346965_WebcastRoomStatsMessage-1684632616357153318&cursor=t-1684632622323_r-1_d-1_u-1_h-1&host=https://live.douyin.com&aid=6383&live_id=1&did_rule=3&debug=false&maxCacheMessageNumber=20&endpoint=live_pc&support_wrds=1&im_path=/webcast/im/fetch/&user_unique_id=7188358506633528844&device_platform=web&cookie_enabled=true&screen_width=1440&screen_height=900&browser_language=zh&browser_platform=MacIntel&browser_name=Mozilla&browser_version=5.0%20(Macintosh;%20Intel%20Mac%20OS%20X%2010_15_7)%20AppleWebKit/537.36%20(KHTML,%20like%20Gecko)%20Chrome/113.0.0.0%20Safari/537.36&browser_online=true&tz_name=Asia/Shanghai&identity=audience&room_id=' + liveRoomId + '&heartbeatDuration=0&signature=00000000'
+    #webSocketUrl = 'wss://webcast5-ws-web-lq.douyin.com/webcast/im/push/v2/?app_name=douyin_web&version_code=180800&webcast_sdk_version=1.0.12&update_version_code=1.0.12&compress=gzip&device_platform=web&cookie_enabled=true&screen_width=1440&screen_height=2560&browser_language=zh-CN&browser_platform=Win32&browser_name=Mozilla&browser_version=5.0%20(Windows%20NT%2010.0;%20Win64;%20x64)%20AppleWebKit/537.36%20(KHTML,%20like%20Gecko)%20Chrome/120.0.0.0%20Safari/537.36%20Edg/120.0.0.0&browser_online=true&tz_name=Asia/Shanghai&cursor=t-1704523551125_r-1_d-1_u-1_fh-7320872183134786596&internal_ext=internal_src:dim|wss_push_room_id:'+liveRoomId +'|wss_push_did:7285964215302932028|first_req_ms:1704523551024|fetch_time:1704523551125|seq:1|wss_info:0-1704523551125-0-0|wrds_v:7320872889626929786|wrds_kvs:AudienceGiftSyncData-1704523547953806805_WebcastRoomStreamAdaptationMessage-1704523545339363697_InteractEffectSyncData-1704520547601399747_LotteryInfoSyncData-1704523262406134920_HighlightContainerSyncData-1_WebcastRoomStatsMessage-1704523546497704102_WebcastRoomRankMessage-1704523516571828328&host=https://live.douyin.com&aid=6383&live_id=1&did_rule=3&endpoint=live_pc&support_wrds=1&user_unique_id=7285964215302932028&im_path=/webcast/im/fetch/&identity=audience&need_persist_msg_count=15&room_id='+ liveRoomId + '&heartbeatDuration=0&signature=RDJMtCOOuuLWg2qT'
     h = {
         'cookie': 'ttwid=' + ttwid,
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',

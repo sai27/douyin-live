@@ -15,7 +15,7 @@ def GiftHandler(groupId, userName, giftName, giftId, repeatCount, repeatEnd):
             return
         if group["repeatCount"] < repeatCount:
             count = repeatCount - group["repeatCount"]
-            SendToProcess(f"{userName},{giftName},{count},[1]\r\n")
+            SendToProcess(f"gift#{userName}#{giftName}#{count}\r\n")
         del groupDict[groupId]
         return
 
@@ -23,7 +23,7 @@ def GiftHandler(groupId, userName, giftName, giftId, repeatCount, repeatEnd):
         if group["repeatCount"] < repeatCount:
             count = repeatCount - group["repeatCount"]
             group["repeatCount"] = repeatCount
-            SendToProcess(f"{userName},{giftName},{count},[2]\r\n")
+            SendToProcess(f"gift#{userName}#{giftName}#{count}\r\n")
     else:
         groupDict[groupId] = {
             "userName" : userName,
@@ -31,7 +31,7 @@ def GiftHandler(groupId, userName, giftName, giftId, repeatCount, repeatEnd):
             "giftId" : giftId,
             "repeatCount" : repeatCount
             }
-        SendToProcess(f"{userName},{giftName},{repeatCount},[3]\r\n")
+        SendToProcess(f"gift#{userName}#{giftName}#{repeatCount}\r\n")
 
 def SendToProcess(data):
     hConsoleWnd = win32gui.FindWindow("ConsoleWindowClass", "E:\\Warcraft III\\war3.exe")
